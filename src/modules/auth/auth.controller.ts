@@ -38,8 +38,8 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @Post('signup')
-  create(@Body() dto: CreateUserDto) {
-    return this.userService.create(dto);
-  }
+  // @Post('signup')
+  // create(@Body() dto: CreateUserDto) {
+  //   return this.userService.create(dto);
+  // }
 }
