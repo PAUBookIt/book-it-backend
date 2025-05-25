@@ -18,7 +18,6 @@ async function bootstrap() {
     .setTitle('Bookit APIs')
     .setDescription('')
     .setVersion('1.0')
-    .addServer('/v1')
     .build();
 
   const documentFactory = SwaggerModule.createDocument(app, config);
