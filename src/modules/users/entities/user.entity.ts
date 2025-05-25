@@ -47,6 +47,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  password: string;
+
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
 }

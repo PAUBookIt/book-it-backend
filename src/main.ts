@@ -1,3 +1,11 @@
+import { randomUUID } from 'crypto';
+
+if (!globalThis.crypto) {
+  globalThis.crypto = {
+    randomUUID
+  } as any;
+}
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -5,6 +13,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1');
+
   const config = new DocumentBuilder()
     .setTitle('Bookit APIs')
     .setDescription('')

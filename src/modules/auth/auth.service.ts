@@ -1,26 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Request } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { access } from 'fs';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private userService: UsersService,
+    private jwtService: JwtService,
+  ) {}
+  login(user: any) {
+    const payload = {
+      email: user.email,
+      sub: { id: user.id, role: user.role },
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.userService.findOne('email', email);
+    console.log(user);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    if (user && user.password === password) {
+      const { password, ...result } = user;
+      return result;
+    } //change this to a more secure approach
+    return null;
   }
 }
