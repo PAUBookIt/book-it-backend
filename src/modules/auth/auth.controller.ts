@@ -38,8 +38,22 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  // @Post('signup')
-  // create(@Body() dto: CreateUserDto) {
-  //   return this.userService.create(dto);
+  @Post('signup')
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: 'User successfully created.' })
+  @ApiResponse({ status: 400, description: 'Invalid input data.' })
+  create(@Body() dto: CreateUserDto) {
+    return this.userService.create(dto);
+  }
+
+  // @Post('verify')
+  // verify(){
+  //   return this.authService.verify()
+  // }
+
+  // @Post('refresh')
+  // refresh(){
+  //   return this.authService.refresh()
   // }
 }

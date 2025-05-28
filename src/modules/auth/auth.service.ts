@@ -32,4 +32,12 @@ export class AuthService {
     } //change this to a more secure approach
     return null;
   }
+
+  async verify(token: string){
+
+  }
+
+  async refresh(token: string){}
+
+  async profile(token: string){}
 }

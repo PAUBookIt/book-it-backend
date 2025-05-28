@@ -13,12 +13,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('v1');
+  app.enableCors()
 
   const config = new DocumentBuilder()
     .setTitle('Bookit APIs')
     .setDescription('')
     .setVersion('1.0')
     .build();
+    
 
   const documentFactory = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
