@@ -26,9 +26,9 @@ export enum NormalUserType {
   ASSOCIATION = 'association',
 }
 
-@Entity('users')
-@Index(['email'])
-@Index(['role'])
+@Entity()
+// @Index(['email'])
+// @Index(['role'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
