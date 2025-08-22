@@ -1,4 +1,10 @@
-import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole, NormalUserType, AdminType } from '../entities/user.entity';
 
@@ -6,10 +12,20 @@ export class CreateUserDto {
   @ApiProperty({
     enum: UserRole,
     description: 'Role of the user',
-    example: UserRole.NORMAL,
+    example: UserRole.NORMAL_USER,
   })
   @IsEnum(UserRole)
   role: UserRole;
+
+  @ApiPropertyOptional({
+    enum: AdminType,
+    description: 'Type of admin user',
+    default: AdminType.STUDENT_AFFAIRS,
+    example: AdminType.STUDENT_AFFAIRS,
+  })
+  @IsEnum(AdminType)
+  @IsOptional()
+  adminType?: AdminType;
 
   @ApiPropertyOptional({
     enum: NormalUserType,
@@ -20,16 +36,6 @@ export class CreateUserDto {
   @IsEnum(NormalUserType)
   @IsOptional()
   normalType?: NormalUserType;
-
-  @ApiPropertyOptional({
-    enum: AdminType,
-    description: 'Type of admin user',
-    default: AdminType.OTHER,
-    example: AdminType.HEAD_OF_SA,
-  })
-  @IsEnum(AdminType)
-  @IsOptional()
-  adminType?: AdminType;
 
   @ApiProperty({
     description: 'Full name of the user',
