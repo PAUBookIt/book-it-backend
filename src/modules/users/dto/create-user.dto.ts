@@ -18,16 +18,6 @@ export class CreateUserDto {
   role: UserRole;
 
   @ApiPropertyOptional({
-    enum: AdminType,
-    description: 'Type of admin user',
-    default: AdminType.STUDENT_AFFAIRS,
-    example: AdminType.STUDENT_AFFAIRS,
-  })
-  @IsEnum(AdminType)
-  @IsOptional()
-  adminType?: AdminType;
-
-  @ApiPropertyOptional({
     enum: NormalUserType,
     description: 'Type of normal user (student, club, association)',
     default: NormalUserType.STUDENT,
@@ -35,7 +25,7 @@ export class CreateUserDto {
   })
   @IsEnum(NormalUserType)
   @IsOptional()
-  normalType?: NormalUserType;
+  normalUserType: NormalUserType;
 
   @ApiProperty({
     description: 'Full name of the user',
