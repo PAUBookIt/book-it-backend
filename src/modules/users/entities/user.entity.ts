@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  BeforeInsert,
 } from 'typeorm';
 
 export enum UserRole {
@@ -126,6 +127,7 @@ export class User {
   reservations: Reservation[];
 
   // Validation method to ensure role consistency
+  @BeforeInsert()
   validateRoleConsistency(): boolean {
     if (this.role === UserRole.ADMIN) {
       return (
