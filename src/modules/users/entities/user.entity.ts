@@ -24,7 +24,7 @@ export enum AdminType {
 export enum NormalUserType {
   STUDENT = 'student',
   CLUB = 'club',
-  ASSOCIATION = 'association',
+  LECTURER = 'lecturer',
 }
 
 @Entity()
@@ -189,10 +189,10 @@ export class User {
     );
   }
 
-  get isAssociation(): boolean {
+  get isLecturer(): boolean {
     return (
       this.role === UserRole.NORMAL_USER &&
-      this.normalUserType === NormalUserType.ASSOCIATION
+      this.normalUserType === NormalUserType.LECTURER
     );
   }
 
