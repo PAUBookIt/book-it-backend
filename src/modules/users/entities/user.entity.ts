@@ -8,7 +8,10 @@ import {
   UpdateDateColumn,
   Index,
   BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
+
+import * as bcrypt from 'bcrypt';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -128,21 +131,51 @@ export class User {
 
   // Validation method to ensure role consistency
   @BeforeInsert()
-  validateRoleConsistency(): boolean {
+  @BeforeUpdate()
+  validateRoleConsistency(): void {
+    // Ensure role is provided
+    if (!this.role) {
+      throw new Error('User role is required');
+    }
+
     if (this.role === UserRole.ADMIN) {
-      return (
-        this.adminType !== null &&
-        this.adminType !== undefined &&
-        this.normalUserType === null
-      );
+      // Admin users MUST have adminType and MUST NOT have normalUserType
+      if (!this.adminType) {
+        throw new Error('Admin users must have adminType specified');
+      }
+      if (this.normalUserType) {
+        throw new Error('Admin users cannot have normalUserType set');
+      }
     } else if (this.role === UserRole.NORMAL_USER) {
-      return (
-        this.normalUserType !== null &&
-        this.normalUserType !== undefined &&
-        this.adminType === null
+      // Normal users MUST have normalUserType and MUST NOT have adminType
+      if (!this.normalUserType) {
+        throw new Error('Normal users must have normalUserType specified');
+      }
+      if (this.adminType) {
+        throw new Error('Normal users cannot have adminType set');
+      }
+    } else {
+      throw new Error(`Invalid role: ${this.role}`);
+    }
+
+    // Additional check: Ensure both types are never set simultaneously
+    if (this.adminType && this.normalUserType) {
+      throw new Error('User cannot have both adminType and normalUserType set');
+    }
+
+    // Additional check: Ensure at least one type is set
+    if (!this.adminType && !this.normalUserType) {
+      throw new Error(
+        'User must have either adminType or normalUserType set based on their role',
       );
     }
-    return false;
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword() {
+    this.email = this.email.toLowerCase().trim();
+    this.password = await bcrypt.hash(this.password, 10);
   }
 
   // Role checking methods for RBAC

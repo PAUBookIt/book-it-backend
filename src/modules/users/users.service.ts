@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { UserRole } from './entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -13,12 +14,16 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const existingUser = await this.findOne(
-      'email',
-      createUserDto.email,
-    );
+    const existingUser = await this.findOne('email', createUserDto.email);
 
-    if(existingUser) throw new BadRequestException(`Student already exists`);
+    if (existingUser) throw new BadRequestException(`Student already exists`);
+
+    if (
+      createUserDto.role === UserRole.NORMAL_USER &&
+      !createUserDto.normalUserType
+    ) {
+      throw new BadRequestException('Normal users must specify a user type');
+    }
     const newUser = this.userRepository.create(createUserDto);
     const savedUser = await this.userRepository.save(newUser);
 
