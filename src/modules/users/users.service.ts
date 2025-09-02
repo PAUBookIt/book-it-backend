@@ -31,8 +31,11 @@ export class UsersService {
     return rest;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    const users = await this.userRepository.find({
+      relations: ['reservations'],
+    });
+    return users;
   }
 
   async findOne(searchParam: 'email' | 'id', searchValue: string) {
@@ -61,7 +64,10 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const user = await this.findOne('id', id);
+    if (!user) throw new BadRequestException('User not found');
+    await this.userRepository.delete(id);
+    return `User ${id} deleted`;
   }
 }
