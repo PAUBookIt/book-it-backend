@@ -26,18 +26,16 @@ export class AuthService {
     const user = await this.userService.findOne('email', email);
     console.log(user);
 
-    if (user && user.password === password) {
+    if (user && (await user.comparePassword(password))) {
       const { password, ...result } = user;
       return result;
     } //change this to a more secure approach
     return null;
   }
 
-  async verify(token: string){
+  async verify(token: string) {}
 
-  }
+  async refresh(token: string) {}
 
-  async refresh(token: string){}
-
-  async profile(token: string){}
+  async profile(token: string) {}
 }

@@ -178,6 +178,10 @@ export class User {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
+  async comparePassword(attempt: string): Promise<boolean> {
+    return await bcrypt.compare(attempt.trim(), this.password);
+  }
+
   // Role checking methods for RBAC
   get isAdmin(): boolean {
     return this.role === UserRole.ADMIN;
