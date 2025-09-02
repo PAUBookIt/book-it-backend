@@ -26,7 +26,7 @@ export class UsersService {
     }
     const newUser = this.userRepository.create(createUserDto);
     const savedUser = await this.userRepository.save(newUser);
-
+    //console.log('This is the user', savedUser);
     const { password, ...rest } = savedUser;
     return rest;
   }
@@ -42,6 +42,21 @@ export class UsersService {
     return user;
   }
 
+  // async findOneForAuth(searchParam: 'email' | 'id', searchValue: string) {
+  //   const user = await this.userRepository.findOne({
+  //     where: { [searchParam]: searchValue },
+  //     select: {
+  //       id: true,
+  //       email: true,
+  //       password: true,
+  //       role: true,
+  //       name: true,
+  //       isActive: true,
+  //       reservations: true,
+  //     },
+  //   });
+  //   return user;
+  // }
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }

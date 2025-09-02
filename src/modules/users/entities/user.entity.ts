@@ -76,7 +76,7 @@ export class User {
 
   @Column({
     length: 255,
-    select: false, // Don't select password by default for security
+    //select: false, // Don't select password by default for security
     comment: 'Hashed password',
   })
   password: string;
