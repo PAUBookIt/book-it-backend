@@ -8,6 +8,7 @@ import {
   ManyToOne,
   Column,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum ReservationStatus {
@@ -20,15 +21,6 @@ export enum ReservationStatus {
 export class Reservation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @OneToOne(() => Room, (room) => room.reservation, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  room: Room;
-
-  @ManyToOne(() => User, (user) => user.reservations)
-  user: User;
 
   @Column({
     type: 'enum',
@@ -45,4 +37,15 @@ export class Reservation {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @ManyToOne(() => Room, (room) => room.reservations, {
+    onDelete: 'CASCADE',
+  })
+  room: Room;
+
+  @ManyToOne(() => User, (user) => user.reservations)
+  user: User;
 }

@@ -1,5 +1,13 @@
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Room {
@@ -15,8 +23,12 @@ export class Room {
   @Column({ default: true })
   isAvailable: boolean;
 
-  @OneToOne(() => Reservation, (reservation) => reservation.room, {
-    nullable: true,
-  })
-  reservation?: Reservation;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.room)
+  reservations: Reservation[];
 }
