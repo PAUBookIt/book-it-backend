@@ -1,0 +1,86 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Matching your frontend roles exactly
+enum Role {
+  student
+  admin
+  facility
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  DENIED
+  CANCELLED
+}
+
+enum RoomStatus {
+  AVAILABLE
+  MAINTENANCE
+  CLEANING
+  CLOSED
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String   // Hashed password
+  firstName String
+  lastName  String
+  role      Role     @default(student)
+  
+  // Relation
+  bookings  Booking[]
+  createdAt DateTime @default(now())
+}
+
+model Classroom {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  capacity    Int
+  location    String    // "SST" or "TYD"
+  
+  status      RoomStatus @default(AVAILABLE)
+  
+  // Stores { projector: "WORKING", ac: "FAULTY" }
+  utilities   Json?     
+  
+  notes       Note[]
+  bookings    Booking[]
+}
+
+model Note {
+  id          Int      @id @default(autoincrement())
+  text        String
+  timestamp   DateTime @default(now()) // Matches your "ts" field
+  
+  classroomId Int
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+}
+
+model Booking {
+  id          Int           @id @default(autoincrement())
+  startTime   DateTime
+  endTime     DateTime
+  purpose     String?
+  
+  status      BookingStatus @default(PENDING)
+  adminNote   String?       // Reason for denial
+  
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
+  
+  classroomId Int
+  classroom   Classroom     @relation(fields: [classroomId], references: [id])
+  
+  createdAt   DateTime      @default(now())
+}
