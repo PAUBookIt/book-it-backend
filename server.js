@@ -216,9 +216,130 @@ app.put("/api/reservations/:id", authenticateToken, async (req, res) => {
 
 // --- SEED ROUTE (Keep your previous seed route here) ---
 // (I omitted the long list to save space, but DO NOT DELETE IT from your file)
+// REPLACE the placeholder /api/seed route with this:
+
 app.post("/api/seed", async (req, res) => {
-  // ... insert your seeding logic here ...
-  res.json({ message: "Use the seed logic from previous steps" });
+  try {
+    // 1. Create Users
+    const password = await bcrypt.hash("Admin123", 10);
+    const studentPassword = await bcrypt.hash("Student123", 10);
+
+    // Admin
+    await prisma.user.upsert({
+      where: { email: "admin@pau.edu.ng" },
+      update: {},
+      create: {
+        email: "admin@pau.edu.ng",
+        password,
+        firstName: "Admin",
+        lastName: "User",
+        role: "admin",
+      },
+    });
+
+    // Facility
+    await prisma.user.upsert({
+      where: { email: "facility@pau.edu.ng" },
+      update: {},
+      create: {
+        email: "facility@pau.edu.ng",
+        password,
+        firstName: "Facility",
+        lastName: "Staff",
+        role: "facility",
+      },
+    });
+
+    // Student
+    await prisma.user.upsert({
+      where: { email: "student@pau.edu.ng" },
+      update: {},
+      create: {
+        email: "student@pau.edu.ng",
+        password: studentPassword,
+        firstName: "John",
+        lastName: "Student",
+        role: "student",
+      },
+    });
+
+    // 2. Create Classrooms
+    const rooms = [
+      { name: "Engineering Drawing Studio", capacity: 80, location: "SST" },
+      {
+        name: "Electronics, Control and Telecomms Lab",
+        capacity: 50,
+        location: "SST",
+      },
+      {
+        name: "Electrical Power and Machines Lab",
+        capacity: 50,
+        location: "SST",
+      },
+      { name: "Computer lab 01", capacity: 50, location: "SST" },
+      { name: "Thermofluid lab", capacity: 50, location: "SST" },
+      { name: "Mechanics of Machines", capacity: 20, location: "SST" },
+      { name: "Classroom 1", capacity: 50, location: "SST" },
+      { name: "Classroom 2", capacity: 50, location: "SST" },
+      { name: "Computer Lab 02", capacity: 50, location: "SST" },
+      { name: "Chemistry lab", capacity: 50, location: "SST" },
+      {
+        name: "Physics and Applied Electricity lab",
+        capacity: 50,
+        location: "SST",
+      },
+      { name: "Classroom 3", capacity: 50, location: "SST" },
+      { name: "Classroom 4", capacity: 50, location: "SST" },
+      { name: "Classroom 5", capacity: 50, location: "SST" },
+      { name: "Strength of Materials", capacity: 15, location: "SST" },
+      { name: "SST New Classroom (Year 4)", capacity: 25, location: "SST" },
+      { name: "Syndicate Room 1", capacity: 10, location: "SST" },
+      { name: "Syndicate Room 2", capacity: 10, location: "SST" },
+      // TYD
+      { name: "Maiduguri", capacity: 50, location: "TYD" },
+      { name: "Ado-Ekiti", capacity: 50, location: "TYD" },
+      { name: "Jalingo", capacity: 80, location: "TYD" },
+      { name: "Zaria", capacity: 80, location: "TYD" },
+      { name: "Jos", capacity: 50, location: "TYD" },
+      { name: "Enugu", capacity: 50, location: "TYD" },
+      { name: "Uyo", capacity: 30, location: "TYD" },
+      { name: "Lokoja", capacity: 30, location: "TYD" },
+      { name: "Bauchi", capacity: 80, location: "TYD" },
+      { name: "Oshogbo", capacity: 30, location: "TYD" },
+      { name: "Umuahia", capacity: 30, location: "TYD" },
+      { name: "Art and Graphics Studio", capacity: 65, location: "TYD" },
+      { name: "Newsroom", capacity: 30, location: "TYD" },
+      { name: "Port-Harcourt", capacity: 80, location: "TYD" },
+      { name: "Computer Lab 2", capacity: 60, location: "TYD" },
+      { name: "Computer Lab 1", capacity: 60, location: "TYD" },
+      { name: "Abeokuta", capacity: 30, location: "TYD" },
+      { name: "Abakaliki", capacity: 80, location: "TYD" },
+      { name: "Ibadan", capacity: 65, location: "TYD" },
+      { name: "Asaba", capacity: 65, location: "TYD" },
+      { name: "TYD New classroom", capacity: 80, location: "TYD" },
+    ];
+
+    for (const room of rooms) {
+      await prisma.classroom.upsert({
+        where: { name: room.name },
+        update: {},
+        create: {
+          name: room.name,
+          capacity: room.capacity,
+          location: room.location,
+          status: "AVAILABLE",
+          utilities: { projector: "WORKING", ac: "WORKING", power: "WORKING" },
+        },
+      });
+    }
+
+    res.json({
+      message: "Database successfully seeded with Users and Classrooms!",
+    });
+  } catch (error) {
+    console.error("Seed Error:", error);
+    res.status(500).json({ error: "Seeding failed", details: error.message });
+  }
 });
 
 app.listen(PORT, () => {
